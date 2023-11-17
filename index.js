@@ -3,11 +3,14 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const crawler = require("crawler-request");
+const bodyParser = require("body-parser");
 const app = express();
 const options = {from: 0, to: 10};
 
-app.get("/extractPDFText", async (req, res) => {
-    const pdfResult = await crawler(req.query.url);
+app.use(bodyParser.json());
+
+app.post("/extractPDFText", async (req, res) => {
+    const pdfResult = await crawler(req.body.url);
     res.send({text: pdfResult.text});
 });
 
