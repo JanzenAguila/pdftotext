@@ -2,7 +2,6 @@ const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const pdfUtil = require("pdf-to-text");
 const crawler = require("crawler-request");
 const app = express();
 const options = {from: 0, to: 10};
