@@ -2,11 +2,23 @@ const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
+
 const fs = require("fs");
 const crawler = require("crawler-request");
 const bodyParser = require("body-parser");
 const app = express();
 const options = {from: 0, to: 10};
+
+const readCSV = async () => {
+    const my_file = await s3.getObject({
+        Bucket: "cyclic-weak-pink-prawn-slip-ap-south-1",
+        Key: "data.json",
+    }).promise()
+
+    return(JSON.parse(my_file.Body.toString('utf-8')));
+}
 
 app.use(bodyParser.json());
 
@@ -16,29 +28,59 @@ app.post("/extractPDFText", async (req, res) => {
 });
 
 app.post("/addToCSV", async (req, res) => {
-    let { user, rating, details, timestamp } = req.body;
-    const data = `"${user}","${rating}","${details}","${timestamp}"\n`;
 
-    try {
-        fs.appendFileSync("data.csv", data);
-        res.send("Data saved successfully.");
-    } catch (err) {
-        console.error(err);
-    }
+    let { user, rating, details, timestamp } = req.body;
+    // const data = `"${user}","${rating}","${details}","${timestamp}"\n`;
+
+    let my_file = await readCSV();
+    my_file.push({
+        user,
+        rating,
+        details,
+        timestamp,
+    });
+
+    await s3.putObject({
+        Body: JSON.stringify(my_file),
+        Bucket: "cyclic-weak-pink-prawn-slip-ap-south-1",
+        Key: "data.json",
+    }).promise()
+    res.send("Data saved");
+    // try {
+    //     fs.appendFileSync("data.csv", data);
+    //     res.send("Data saved successfully.");
+    // } catch (err) {
+    //     console.error(err);
+    // }
 });
 
 app.post("/readFromCSV", async (req, res) => {
-    fs.readFile("data.csv", "utf-8", (err, data) => {
-        if (err) console.log(err);
-        else res.send(data);
-    });
+    let my_file = await readCSV();
+
+    res.send(my_file);
+
+    // fs.readFile("data.csv", "utf-8", (err, data) => {
+    //     if (err) console.log(err);
+    //     else res.send(data);
+    // });
 });
 
 app.post("/resetCSV", async (req, res) => {
-    fs.writeFile("data.csv", "user,rating,details,timestamp\n", "utf-8", (err) => {
-        if (err) console.log(err);
-        else res.send("Data saved");
-    });
+    await s3.putObject({
+        Body: JSON.stringify([{
+            user: "user1",
+            rating: "rating1",
+            details: "details1",
+            timestamp: "timestamp1",
+        }]),
+        Bucket: "cyclic-weak-pink-prawn-slip-ap-south-1",
+        Key: "data.json",
+    }).promise()
+    res.send("Data saved");
+    // fs.writeFile("data.csv", "user,rating,details,timestamp\n", "utf-8", (err) => {
+    //     if (err) console.log(err);
+    //     else res.send("Data saved");
+    // });
 });
 
 app.get("/", (req, res) => {
