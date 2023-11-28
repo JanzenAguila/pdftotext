@@ -30,7 +30,6 @@ app.post("/extractPDFText", async (req, res) => {
 app.post("/addToCSV", async (req, res) => {
 
     let { user, rating, details, timestamp } = req.body;
-    // const data = `"${user}","${rating}","${details}","${timestamp}"\n`;
 
     let my_file = await readCSV();
     my_file.push({
@@ -46,23 +45,12 @@ app.post("/addToCSV", async (req, res) => {
         Key: "data.json",
     }).promise()
     res.send("Data saved");
-    // try {
-    //     fs.appendFileSync("data.csv", data);
-    //     res.send("Data saved successfully.");
-    // } catch (err) {
-    //     console.error(err);
-    // }
 });
 
-app.post("/readFromCSV", async (req, res) => {
+app.get("/readFromCSV", async (req, res) => {
     let my_file = await readCSV();
 
     res.send(my_file);
-
-    // fs.readFile("data.csv", "utf-8", (err, data) => {
-    //     if (err) console.log(err);
-    //     else res.send(data);
-    // });
 });
 
 app.post("/resetCSV", async (req, res) => {
@@ -77,10 +65,6 @@ app.post("/resetCSV", async (req, res) => {
         Key: "data.json",
     }).promise()
     res.send("Data saved");
-    // fs.writeFile("data.csv", "user,rating,details,timestamp\n", "utf-8", (err) => {
-    //     if (err) console.log(err);
-    //     else res.send("Data saved");
-    // });
 });
 
 app.get("/", (req, res) => {
