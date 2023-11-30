@@ -34,7 +34,9 @@ app.post("/addToCSV", async (req, res) => {
     let my_file = await readCSV();
     my_file.push({
         user,
-        rating,
+        satisfaction_rating,
+        frequency,
+        recommendation_level,
         details,
         timestamp,
     });
@@ -55,12 +57,7 @@ app.get("/readFromCSV", async (req, res) => {
 
 app.post("/resetCSV", async (req, res) => {
     await s3.putObject({
-        Body: JSON.stringify([{
-            user: "user1",
-            rating: "rating1",
-            details: "details1",
-            timestamp: "timestamp1",
-        }]),
+        Body: JSON.stringify([]),
         Bucket: "cyclic-weak-pink-prawn-slip-ap-south-1",
         Key: "data.json",
     }).promise()
