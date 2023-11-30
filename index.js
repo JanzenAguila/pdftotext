@@ -29,11 +29,10 @@ app.post("/extractPDFText", async (req, res) => {
 
 app.post("/addToCSV", async (req, res) => {
 
-    let { user, rating, details, timestamp } = req.body;
+    let { satisfaction_rating, frequency, recommendation_level, details, timestamp } = req.body;
 
     let my_file = await readCSV();
     my_file.push({
-        user,
         satisfaction_rating,
         frequency,
         recommendation_level,
