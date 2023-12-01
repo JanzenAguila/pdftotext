@@ -29,7 +29,7 @@ app.post("/extractPDFText", async (req, res) => {
 
 app.post("/addToCSV", async (req, res) => {
 
-    let { satisfaction_rating, frequency, recommendation_level, details, timestamp } = req.body;
+    let { satisfaction_rating, frequency, recommendation_level, details, timestamp, ai_flag } = req.body;
 
     let my_file = await readCSV();
     my_file.push({
@@ -38,6 +38,7 @@ app.post("/addToCSV", async (req, res) => {
         recommendation_level,
         details,
         timestamp,
+        ai_flag
     });
 
     await s3.putObject({
