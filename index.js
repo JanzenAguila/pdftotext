@@ -31,8 +31,6 @@ app.post("/addToCSV", async (req, res) => {
 
     let { satisfaction_rating, frequency, recommendation_level, details, timestamp, ai_flag } = req.body;
 
-    let my_file = await readCSV();
-
     const jsonToPush = {
         satisfaction_rating,
         frequency,
@@ -43,6 +41,8 @@ app.post("/addToCSV", async (req, res) => {
     }
 
     console.log(jsonToPush);
+
+    let my_file = await readCSV();
 
     my_file.push(jsonToPush);
 
