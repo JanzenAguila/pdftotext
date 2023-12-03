@@ -32,14 +32,19 @@ app.post("/addToCSV", async (req, res) => {
     let { satisfaction_rating, frequency, recommendation_level, details, timestamp, ai_flag } = req.body;
 
     let my_file = await readCSV();
-    my_file.push({
+
+    const jsonToPush = {
         satisfaction_rating,
         frequency,
         recommendation_level,
         details,
         timestamp,
         ai_flag
-    });
+    }
+
+    console.log(jsonToPush);
+
+    my_file.push(jsonToPush);
 
     await s3.putObject({
         Body: JSON.stringify(my_file),
